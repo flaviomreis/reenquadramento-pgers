@@ -554,12 +554,26 @@ export function EmployeeForm() {
           <div>Cargo: {simulationResult.cargo}</div>
           <div>Posição atual: {simulationResult.posicaoAtual}</div>
           <div>
-            Remuneração atual: {simulationResult.remuneracao?.toFixed(2)}
+            Remuneração atual:{" "}
+            {simulationResult.remuneracao?.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
           </div>
           <div>Reenquadrada na posição: {simulationResult.novaPosicao}</div>
-          <div>Subsídio: {simulationResult.subsidio?.toFixed(2)}</div>
           <div>
-            Parcela de Irredutibilidade: {simulationResult.parcela?.toFixed(2)}
+            Subsídio:{" "}
+            {simulationResult.subsidio?.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </div>
+          <div>
+            Parcela de Irredutibilidade:{" "}
+            {simulationResult.parcela?.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
           </div>
         </DialogContent>
       </Dialog>
