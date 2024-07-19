@@ -187,6 +187,7 @@ const employeeFormSchema = z.union([
     tabela: z.enum(["01/2025", "10/2025", "10/2026"], {
       required_error: "Você deve informar a tabela de reenquadramento",
     }),
+    produtividade: z.coerce.number().gte(0),
   }),
   z.object({
     cargo: z.literal("tecnico"),
@@ -198,6 +199,7 @@ const employeeFormSchema = z.union([
     tabela: z.enum(["01/2025", "10/2025", "10/2026"], {
       required_error: "Você deve informar a tabela de reenquadramento",
     }),
+    produtividade: z.coerce.number().gte(0),
   }),
 ]);
 
@@ -223,6 +225,7 @@ export function EmployeeForm() {
       tempoEstado: 0,
       totalVantagens: 0,
       tabela: "01/2025",
+      produtividade: 875,
     },
   });
   const { toast } = useToast();
@@ -321,7 +324,7 @@ export function EmployeeForm() {
                     <FormItem>
                       <FormLabel>Valor total das vantagens (em R$)</FormLabel>
                       <FormControl>
-                        <Input placeholder="1500,31" {...field} />
+                        <Input placeholder="1500.31" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -329,6 +332,21 @@ export function EmployeeForm() {
                 />
               </div>
 
+              <div className="flex flex-col space-y-2">
+                <FormField
+                  control={form.control}
+                  name="produtividade"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Produtividade Média (em R$)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="875.00" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="tabela"
