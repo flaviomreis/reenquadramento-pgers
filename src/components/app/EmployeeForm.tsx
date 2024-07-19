@@ -392,7 +392,7 @@ export function EmployeeForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleEmployeeForm)}>
-        <Card className="w-[450px]">
+        <Card className="w-[350px]">
           <CardHeader>
             <CardTitle>Simulação de Reenquadramento</CardTitle>
             <CardDescription>PGE-RS: PL 240/2024.</CardDescription>
@@ -474,7 +474,9 @@ export function EmployeeForm() {
                   name="totalVantagens"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Valor total das vantagens (em R$)</FormLabel>
+                      <FormLabel>
+                        Total das vantagens temporais (em R$)
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="1500.31" {...field} />
                       </FormControl>
