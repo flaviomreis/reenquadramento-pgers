@@ -25,8 +25,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-const vencimento = {
+const vencimentos = {
   tecnico: {
     AI: 3655.28,
     AII: 4020.81,
@@ -37,17 +45,19 @@ const vencimento = {
     DI: 6475.55,
     DII: 7123.11,
   },
-  analistas: {
+  analista: {
     AI: 8111.95,
     AII: 8923.15,
     BI: 9815.46,
     BII: 10797.01,
     CI: 11876.71,
     CII: 13064.38,
+    DI: 0,
+    DII: 0,
   },
 };
 
-const subsidio = {
+const subsidios = {
   "01/2025": {
     tecnico: {
       AI: 4600,
@@ -203,18 +213,16 @@ const employeeFormSchema = z.union([
   }),
 ]);
 
-// const employeeFormSchema = z.object({
-//   cargo: z.enum(["analista", "tecnico"], {
-//     required_error: "Você deve selecionar um cargo",
-//   }),
-//   posicao: z.enum(["AI", "AII", "BI", "BII", "CI", "CII", "DI", "DII"], {
-//     required_error: "Você deve informar a posição na carreira",
-//   }),
-//   tempoEstado: z.coerce.number().int().gte(0),
-//   totalVantagens: z.coerce.number().gte(0),
-// });
-
 type EmployeeFormSchema = z.infer<typeof employeeFormSchema>;
+
+type SimulationResulType = {
+  cargo?: string;
+  posicaoAtual?: string;
+  remuneracao?: number;
+  novaPosicao?: string;
+  subsidio?: number;
+  parcela?: number;
+};
 
 export function EmployeeForm() {
   const form = useForm<EmployeeFormSchema>({
@@ -229,12 +237,156 @@ export function EmployeeForm() {
     },
   });
   const { toast } = useToast();
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [simulationResult, setSimulationResult] =
+    React.useState<SimulationResulType>({});
 
   function handleEmployeeForm(data: EmployeeFormSchema) {
-    toast({
-      title: "Simulação de Reenquadramento",
-      description: "Reenquadrado como...",
+    const vencimento = vencimentos[data.cargo][data.posicao];
+    const remuneracao = vencimento + data.totalVantagens;
+
+    let posicao:
+      | "AI"
+      | "AII"
+      | "AIII"
+      | "BI"
+      | "BII"
+      | "BIII"
+      | "CI"
+      | "CII"
+      | "CIII"
+      | "DI"
+      | "DII"
+      | "DIII"
+      | "EI"
+      | "EII"
+      | "EIII"
+      | "FI"
+      | "FII"
+      | "FIII" = "AI";
+
+    if (data.cargo == "tecnico") {
+      if (data.posicao == "AI") {
+        if (data.tempoEstado <= 3) {
+          posicao = "AI";
+        } else if (data.tempoEstado > 3 && data.tempoEstado <= 6) {
+          posicao = "AII";
+        } else if (data.tempoEstado > 6) {
+          posicao = "AIII";
+        }
+      } else if (data.posicao == "AII") {
+        if (data.tempoEstado <= 6) {
+          posicao = "BI";
+        } else if (data.tempoEstado > 6 && data.tempoEstado <= 9) {
+          posicao = "BII";
+        } else if (data.tempoEstado > 9 && data.tempoEstado <= 12) {
+          posicao = "BIII";
+        } else if (data.tempoEstado > 12 && data.tempoEstado <= 15) {
+          posicao = "CI";
+        } else if (data.tempoEstado > 15) {
+          posicao = "CII";
+        }
+      } else if (data.posicao == "BI") {
+        if (data.tempoEstado <= 15) {
+          posicao = "CIII";
+        } else if (data.tempoEstado >= 15) {
+          posicao = "DI";
+        }
+      } else if (data.posicao == "BII") {
+        if (data.tempoEstado <= 15) {
+          posicao = "DII";
+        } else if (data.tempoEstado >= 15) {
+          posicao = "DIII";
+        }
+      } else if (data.posicao == "CI") {
+        if (data.tempoEstado <= 15) {
+          posicao = "EI";
+        } else if (data.tempoEstado >= 15) {
+          posicao = "EII";
+        }
+      } else if (data.posicao == "CII") {
+        if (data.tempoEstado <= 15) {
+          posicao = "EIII";
+        } else if (data.tempoEstado >= 15) {
+          posicao = "FI";
+        }
+      } else if (data.posicao == "DI") {
+        posicao = "FII";
+      } else if (data.posicao == "DII") {
+        posicao = "FIII";
+      }
+    } else if (data.cargo == "analista") {
+      if (data.posicao == "AI") {
+        if (data.tempoEstado <= 3) {
+          posicao = "AI";
+        } else if (data.tempoEstado > 3 && data.tempoEstado <= 6) {
+          posicao = "AII";
+        } else if (data.tempoEstado > 6) {
+          posicao = "AIII";
+        }
+      } else if (data.posicao == "AII") {
+        if (data.tempoEstado <= 6) {
+          posicao = "BI";
+        } else if (data.tempoEstado > 6 && data.tempoEstado <= 9) {
+          posicao = "BII";
+        } else if (data.tempoEstado > 9 && data.tempoEstado <= 12) {
+          posicao = "BIII";
+        } else if (data.tempoEstado > 12 && data.tempoEstado <= 15) {
+          posicao = "CI";
+        } else if (data.tempoEstado > 15) {
+          posicao = "CII";
+        }
+      } else if (data.posicao == "BI") {
+        if (data.tempoEstado <= 15) {
+          posicao = "CIII";
+        } else if (data.tempoEstado >= 15) {
+          posicao = "DI";
+        }
+      } else if (data.posicao == "BII") {
+        if (data.tempoEstado <= 15) {
+          posicao = "DII";
+        } else if (data.tempoEstado >= 15) {
+          posicao = "DIII";
+        }
+      } else if (data.posicao == "CI") {
+        if (data.tempoEstado <= 15) {
+          posicao = "EI";
+        } else if (data.tempoEstado >= 15) {
+          posicao = "EII";
+        }
+      } else if (data.posicao == "CII") {
+        if (data.tempoEstado <= 15) {
+          posicao = "FII";
+        } else if (data.tempoEstado >= 15) {
+          posicao = "FIII";
+        }
+      }
+    }
+
+    console.log(posicao);
+    const subsidio = subsidios[data.tabela][data.cargo][posicao];
+
+    const parcela = subsidio < remuneracao ? remuneracao - subsidio : 0;
+
+    console.log(vencimento, data);
+    // toast({
+    //   title: "Simulação de Reenquadramento",
+    //   description: `
+    //   Vencimento atual do cargo ${data.cargo} : ${data.posicao} é R$ ${vencimento}
+    //   Reumeração total atual é R$ ${remuneracao}.
+    //   O reenquadramento será na posição ${posicao}.
+    //   O subsídio nessa posição é R$ ${subsidio}.
+    //   `,
+    // });
+    setSimulationResult({
+      cargo: data.cargo,
+      posicaoAtual: data.posicao,
+      remuneracao,
+      subsidio,
+      novaPosicao: posicao,
+      parcela,
     });
+    setOpen(true);
   }
 
   return (
@@ -390,6 +542,27 @@ export function EmployeeForm() {
           </CardFooter>
         </Card>
       </form>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Resultado da Simulação</DialogTitle>
+            <DialogDescription>
+              Não tem valor legal e pode conter erros
+            </DialogDescription>
+          </DialogHeader>
+          <div>Cargo: {simulationResult.cargo}</div>
+          <div>Posição atual: {simulationResult.posicaoAtual}</div>
+          <div>
+            Remuneração atual: {simulationResult.remuneracao?.toFixed(2)}
+          </div>
+          <div>Reenquadrada na posição: {simulationResult.novaPosicao}</div>
+          <div>Subsídio: {simulationResult.subsidio?.toFixed(2)}</div>
+          <div>
+            Parcela de Irredutibilidade: {simulationResult.parcela?.toFixed(2)}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Form>
   );
 }
