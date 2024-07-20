@@ -587,7 +587,7 @@ export function EmployeeForm() {
                     {toLocaleString(
                       item.ganho - simulationResult.produtividade
                     )}{" "}
-                    além da produtividade
+                    acima da produtividade
                   </div>
                 )}
               {simulationResult.produtividade &&
@@ -597,7 +597,7 @@ export function EmployeeForm() {
                     {toLocaleString(
                       simulationResult.produtividade - item.ganho
                     )}{" "}
-                    aquém da produtividade
+                    abaixo da produtividade
                   </div>
                 )}
             </div>
