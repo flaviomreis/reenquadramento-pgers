@@ -547,7 +547,7 @@ export function EmployeeForm() {
                 name="dataPublicacao"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Data prevista de Publicação da Lei</FormLabel>
+                    <FormLabel>Data prevista de publicação da Lei</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
