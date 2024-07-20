@@ -250,6 +250,7 @@ export function EmployeeForm() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [simulationResult, setSimulationResult] =
     React.useState<SimulationResulType>({});
+  const [date, setDate] = React.useState<Date>();
 
   type posicoes = keyof (typeof subsidios)["01/2025"]["analista"];
 
@@ -560,7 +561,7 @@ export function EmployeeForm() {
             Cargo: {simulationResult.cargo?.toUpperCase()} -{" "}
             {simulationResult.posicaoAtual}
           </div>
-          <div>Remuneração atual:</div>
+          <div>Remuneração na posição atual:</div>
           <div>{toLocaleString(simulationResult.remuneracao)}</div>
           <div>Remuneração com Produtividade:</div>
           <div>
@@ -570,7 +571,12 @@ export function EmployeeForm() {
                 simulationResult.remuneracao + simulationResult.produtividade
             )}
           </div>
-          <div>Reenquadrada na posição: {simulationResult.novaPosicao}</div>
+          <div className="flex items-center gap-2">
+            Reenquadrado na posição:{" "}
+            <div className="font-semibold border border-black px-3 py-1 rounded-sm">
+              {simulationResult.novaPosicao}
+            </div>
+          </div>
           {simulationResult.tabela?.map((item) => (
             <div key={item.quando}>
               <Separator className="mt-4" />
