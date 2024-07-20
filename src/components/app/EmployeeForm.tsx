@@ -226,6 +226,7 @@ type SimulationResulType = {
   remuneracao?: number;
   produtividade?: number;
   novaPosicao?: string;
+  tempoEstado?: number;
   tabela?: [
     {
       quando: string;
@@ -423,6 +424,7 @@ export function EmployeeForm() {
       novaPosicao: posicao,
       remuneracao,
       produtividade: data.produtividade,
+      tempoEstado,
       tabela,
     });
     setOpen(true);
@@ -629,8 +631,10 @@ export function EmployeeForm() {
             </DialogDescription>
           </DialogHeader>
           <div>
-            Cargo: {simulationResult.cargo?.toUpperCase()} -{" "}
-            {simulationResult.posicaoAtual}
+            Cargo: {simulationResult.cargo?.toUpperCase()} há{" "}
+            {simulationResult.tempoEstado &&
+              simulationResult.tempoEstado.toFixed(2)}{" "}
+            anos
           </div>
           <div>Remuneração na posição atual:</div>
           <div>{toLocaleString(simulationResult.remuneracao)}</div>
@@ -643,7 +647,11 @@ export function EmployeeForm() {
             )}
           </div>
           <div className="flex items-center gap-2">
-            Reenquadrado na posição:{" "}
+            Reenquadrado de{" "}
+            <div className="font-semibold border border-black px-3 py-1 rounded-sm">
+              {simulationResult.posicaoAtual}
+            </div>{" "}
+            para{" "}
             <div className="font-semibold border border-black px-3 py-1 rounded-sm">
               {simulationResult.novaPosicao}
             </div>
