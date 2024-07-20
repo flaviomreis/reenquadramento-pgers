@@ -1,6 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { any, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import * as React from "react";
@@ -33,6 +33,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { Separator } from "../ui/separator";
+import { Angry, Smile, ThumbsDown, ThumbsUp } from "lucide-react";
 
 const vencimentos = {
   tecnico: {
@@ -194,9 +204,6 @@ const employeeFormSchema = z.union([
     }),
     tempoEstado: z.coerce.number().int().gte(0),
     totalVantagens: z.coerce.number().gte(0),
-    tabela: z.enum(["01/2025", "10/2025", "10/2026"], {
-      required_error: "Você deve informar a tabela de reenquadramento",
-    }),
     produtividade: z.coerce.number().gte(0),
   }),
   z.object({
@@ -206,9 +213,6 @@ const employeeFormSchema = z.union([
     }),
     tempoEstado: z.coerce.number().int().gte(0),
     totalVantagens: z.coerce.number().gte(0),
-    tabela: z.enum(["01/2025", "10/2025", "10/2026"], {
-      required_error: "Você deve informar a tabela de reenquadramento",
-    }),
     produtividade: z.coerce.number().gte(0),
   }),
 ]);
@@ -219,9 +223,16 @@ type SimulationResulType = {
   cargo?: string;
   posicaoAtual?: string;
   remuneracao?: number;
+  produtividade?: number;
   novaPosicao?: string;
-  subsidio?: number;
-  parcela?: number;
+  tabela?: [
+    {
+      quando: string;
+      subsidio: number;
+      parcela: number;
+      ganho: number;
+    }
+  ];
 };
 
 export function EmployeeForm() {
@@ -232,7 +243,6 @@ export function EmployeeForm() {
       posicao: "AI",
       tempoEstado: 0,
       totalVantagens: 0,
-      tabela: "01/2025",
       produtividade: 875,
     },
   });
@@ -240,6 +250,35 @@ export function EmployeeForm() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [simulationResult, setSimulationResult] =
     React.useState<SimulationResulType>({});
+
+  type posicoes = keyof (typeof subsidios)["01/2025"]["analista"];
+
+  function calculaItemTabela(
+    quando: "01/2025" | "10/2025" | "10/2026",
+    data: EmployeeFormSchema,
+    remuneracao: number,
+    posicao: posicoes
+  ): { quando: string; subsidio: number; parcela: number; ganho: number } {
+    const subsidio = subsidios[quando][data.cargo][posicao];
+    const parcela = subsidio < remuneracao ? remuneracao - subsidio : 0;
+    const ganho = parcela > 0 ? 0 : subsidio - remuneracao;
+
+    return {
+      quando,
+      subsidio,
+      parcela,
+      ganho,
+    };
+  }
+
+  function toLocaleString(valor: number | undefined): string {
+    return valor !== undefined
+      ? valor.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })
+      : "";
+  }
 
   function handleEmployeeForm(data: EmployeeFormSchema) {
     const vencimento = vencimentos[data.cargo][data.posicao];
@@ -363,12 +402,12 @@ export function EmployeeForm() {
       }
     }
 
-    console.log(posicao);
-    const subsidio = subsidios[data.tabela][data.cargo][posicao];
+    const tabela: [
+      { quando: string; subsidio: number; parcela: number; ganho: number }
+    ] = [calculaItemTabela("01/2025", data, remuneracao, posicao)];
+    tabela.push(calculaItemTabela("10/2025", data, remuneracao, posicao));
+    tabela.push(calculaItemTabela("10/2026", data, remuneracao, posicao));
 
-    const parcela = subsidio < remuneracao ? remuneracao - subsidio : 0;
-
-    console.log(vencimento, data);
     // toast({
     //   title: "Simulação de Reenquadramento",
     //   description: `
@@ -381,10 +420,10 @@ export function EmployeeForm() {
     setSimulationResult({
       cargo: data.cargo,
       posicaoAtual: data.posicao,
-      remuneracao,
-      subsidio,
       novaPosicao: posicao,
-      parcela,
+      remuneracao,
+      produtividade: data.produtividade,
+      tabela,
     });
     setOpen(true);
   }
@@ -501,42 +540,6 @@ export function EmployeeForm() {
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="tabela"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Tabela de Reenquadramento</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="01/2025" />
-                          </FormControl>
-                          <FormLabel className="font-normal">01/2025</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="10/2025" />
-                          </FormControl>
-                          <FormLabel className="font-normal">10/2025</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="10/2026" />
-                          </FormControl>
-                          <FormLabel className="font-normal">10/2026</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
@@ -546,37 +549,59 @@ export function EmployeeForm() {
       </form>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="text-sm w-[350px] gap-2">
           <DialogHeader>
             <DialogTitle>Resultado da Simulação</DialogTitle>
             <DialogDescription>
               Não tem valor legal e pode conter erros
             </DialogDescription>
           </DialogHeader>
-          <div>Cargo: {simulationResult.cargo}</div>
-          <div>Posição atual: {simulationResult.posicaoAtual}</div>
           <div>
-            Remuneração atual:{" "}
-            {simulationResult.remuneracao?.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
+            Cargo: {simulationResult.cargo?.toUpperCase()} -{" "}
+            {simulationResult.posicaoAtual}
+          </div>
+          <div>Remuneração atual:</div>
+          <div>{toLocaleString(simulationResult.remuneracao)}</div>
+          <div>Remuneração com Produtividade:</div>
+          <div>
+            {toLocaleString(
+              simulationResult.remuneracao &&
+                simulationResult.produtividade &&
+                simulationResult.remuneracao + simulationResult.produtividade
+            )}
           </div>
           <div>Reenquadrada na posição: {simulationResult.novaPosicao}</div>
-          <div>
-            Subsídio:{" "}
-            {simulationResult.subsidio?.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </div>
-          <div>
-            Parcela de Irredutibilidade:{" "}
-            {simulationResult.parcela?.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </div>
+          {simulationResult.tabela?.map((item) => (
+            <div key={item.quando}>
+              <Separator className="mt-4" />
+              <div className="font-semibold">{item.quando}</div>
+              <div>Subsídio: {toLocaleString(item.subsidio)}</div>
+              <div>
+                Parcela de Irredutibilidade: {toLocaleString(item.parcela)}
+              </div>
+              <div>Ganho com Reenquadramento: {toLocaleString(item.ganho)}</div>
+              {simulationResult.produtividade &&
+                item.ganho > simulationResult.produtividade && (
+                  <div className="flex flex-row items-center gap-2">
+                    <ThumbsUp className="text-green-600 font-bold" />
+                    {toLocaleString(
+                      item.ganho - simulationResult.produtividade
+                    )}{" "}
+                    além da produtividade
+                  </div>
+                )}
+              {simulationResult.produtividade &&
+                item.ganho <= simulationResult.produtividade && (
+                  <div className="flex flex-row items-center gap-2">
+                    <ThumbsDown className="text-red-600 font-bold" />
+                    {toLocaleString(
+                      simulationResult.produtividade - item.ganho
+                    )}{" "}
+                    aquém da produtividade
+                  </div>
+                )}
+            </div>
+          ))}
         </DialogContent>
       </Dialog>
     </Form>
