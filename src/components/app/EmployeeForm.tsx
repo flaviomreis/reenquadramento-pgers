@@ -328,25 +328,25 @@ export function EmployeeForm() {
       } else if (data.posicao == "BI") {
         if (data.tempoEstado <= 15) {
           posicao = "CIII";
-        } else if (data.tempoEstado >= 15) {
+        } else if (data.tempoEstado > 15) {
           posicao = "DI";
         }
       } else if (data.posicao == "BII") {
         if (data.tempoEstado <= 15) {
           posicao = "DII";
-        } else if (data.tempoEstado >= 15) {
+        } else if (data.tempoEstado > 15) {
           posicao = "DIII";
         }
       } else if (data.posicao == "CI") {
         if (data.tempoEstado <= 15) {
           posicao = "EI";
-        } else if (data.tempoEstado >= 15) {
+        } else if (data.tempoEstado > 15) {
           posicao = "EII";
         }
       } else if (data.posicao == "CII") {
         if (data.tempoEstado <= 15) {
           posicao = "EIII";
-        } else if (data.tempoEstado >= 15) {
+        } else if (data.tempoEstado > 15) {
           posicao = "FI";
         }
       } else if (data.posicao == "DI") {
@@ -378,25 +378,25 @@ export function EmployeeForm() {
       } else if (data.posicao == "BI") {
         if (data.tempoEstado <= 15) {
           posicao = "CIII";
-        } else if (data.tempoEstado >= 15) {
+        } else if (data.tempoEstado > 15) {
           posicao = "DI";
         }
       } else if (data.posicao == "BII") {
         if (data.tempoEstado <= 15) {
           posicao = "DII";
-        } else if (data.tempoEstado >= 15) {
+        } else if (data.tempoEstado > 15) {
           posicao = "DIII";
         }
       } else if (data.posicao == "CI") {
         if (data.tempoEstado <= 15) {
           posicao = "EI";
-        } else if (data.tempoEstado >= 15) {
+        } else if (data.tempoEstado > 15) {
           posicao = "EII";
         }
       } else if (data.posicao == "CII") {
         if (data.tempoEstado <= 15) {
           posicao = "FII";
-        } else if (data.tempoEstado >= 15) {
+        } else if (data.tempoEstado > 15) {
           posicao = "FIII";
         }
       }
