@@ -436,9 +436,9 @@ export function EmployeeForm() {
       <form onSubmit={form.handleSubmit(handleEmployeeForm)}>
         <Card className="w-[350px]">
           <CardHeader>
-            <CardTitle className="flex flex-row justify-between">
-              <div>Simulação de Reequadramento</div>
-              <div>
+            <CardTitle>
+              <div className="flex flex-row justify-between">
+                Simulação de Reequadramento
                 <ModeToggle />
               </div>
             </CardTitle>
