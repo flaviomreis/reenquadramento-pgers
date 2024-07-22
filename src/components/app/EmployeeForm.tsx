@@ -40,6 +40,7 @@ import { CalendarIcon, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
+import { ModeToggle } from "../mode-toogle";
 
 const vencimentos = {
   tecnico: {
@@ -435,7 +436,12 @@ export function EmployeeForm() {
       <form onSubmit={form.handleSubmit(handleEmployeeForm)}>
         <Card className="w-[350px]">
           <CardHeader>
-            <CardTitle>Simulação de Reenquadramento</CardTitle>
+            <CardTitle className="flex flex-row justify-between">
+              <div>Simulação de Reequadramento</div>
+              <div>
+                <ModeToggle />
+              </div>
+            </CardTitle>
             <CardDescription>PGE-RS: PL 240/2024.</CardDescription>
           </CardHeader>
           <CardContent>
