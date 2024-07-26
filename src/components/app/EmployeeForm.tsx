@@ -599,7 +599,7 @@ export function EmployeeForm() {
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>
-                        Data de referência do Tempo de Estado
+                        Data referência Tempo de Serviço Público
                       </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
