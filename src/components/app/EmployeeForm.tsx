@@ -262,7 +262,7 @@ export function EmployeeForm() {
       totalVantagens: 0,
       produtividade: 875,
       dataReferencia: new Date(2024, 5, 30),
-      dataPublicacao: new Date(2024, 6, 31),
+      dataPublicacao: new Date(2025, 0, 1),
       escolaridade: "superior",
     },
   });
@@ -643,7 +643,9 @@ export function EmployeeForm() {
                   name="dataPublicacao"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Data prevista de publicação da Lei</FormLabel>
+                      <FormLabel>
+                        Data prevista entrada em vigor da Lei
+                      </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
