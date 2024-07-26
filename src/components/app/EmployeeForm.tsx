@@ -466,9 +466,9 @@ export function EmployeeForm() {
   }
 
   return (
-    <ScrollArea className="h-full p-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleEmployeeForm)}>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleEmployeeForm)}>
+        <ScrollArea className="h-full  max-h-screen overflow-y-auto">
           <Card className="w-[350px]">
             <CardHeader>
               <CardTitle>
@@ -716,9 +716,11 @@ export function EmployeeForm() {
               <Button>Simular</Button>
             </CardFooter>
           </Card>
-        </form>
+        </ScrollArea>
+      </form>
 
-        <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <ScrollArea className="h-full  max-h-screen overflow-y-auto">
           <DialogContent className="text-sm w-[350px] gap-2">
             <DialogHeader>
               <DialogTitle>Resultado da Simulação</DialogTitle>
@@ -786,8 +788,8 @@ export function EmployeeForm() {
               </div>
             ))}
           </DialogContent>
-        </Dialog>
-      </Form>
-    </ScrollArea>
+        </ScrollArea>
+      </Dialog>
+    </Form>
   );
 }
