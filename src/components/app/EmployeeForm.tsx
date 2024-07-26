@@ -41,6 +41,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { ModeToggle } from "../mode-toogle";
+import { ScrollArea } from "../ui/scroll-area";
 
 const vencimentos = {
   tecnico: {
@@ -465,318 +466,328 @@ export function EmployeeForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleEmployeeForm)}>
-        <Card className="w-[350px]">
-          <CardHeader>
-            <CardTitle>
-              <div className="flex flex-row justify-between">
-                Simulação de Reequadramento
-                <ModeToggle />
+    <ScrollArea className="h-full p-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleEmployeeForm)}>
+          <Card className="w-[350px]">
+            <CardHeader>
+              <CardTitle>
+                <div className="flex flex-row justify-between">
+                  Simulação de Reequadramento
+                  <ModeToggle />
+                </div>
+              </CardTitle>
+              <CardDescription>PGE-RS: PL 240/2024.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid w-full items-center gap-4">
+                <FormField
+                  control={form.control}
+                  name="cargo"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Cargo</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-row justify-between space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="analista" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Analista
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="tecnico" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Técnico
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="posicao"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Posição na carreira</FormLabel>
+                      <FormControl>
+                        <Input placeholder="AI" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="escolaridade"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Grau de Instrução:</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col justify-between space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="medio" />
+                            </FormControl>
+                            <FormLabel className="font-normal">Médio</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="superior" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Superior
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="lato-sensu" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Lato Sensu
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="stricto-sensu" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Stricto Sensu
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tempoEstado"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tempo de Serv. Público (em dias)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="3" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="dataReferencia"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>
+                        Data de referência do Tempo de Estado
+                      </FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP", { locale: ptBR })
+                              ) : (
+                                <span>Selecione uma data</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="dataPublicacao"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Data prevista de publicação da Lei</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP", { locale: ptBR })
+                              ) : (
+                                <span>Selecione uma data</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="totalVantagens"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Total das vantagens temporais (em R$)
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="1500.31" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="produtividade"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Produtividade média (em R$)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="875.00" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            </CardTitle>
-            <CardDescription>PGE-RS: PL 240/2024.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid w-full items-center gap-4">
-              <FormField
-                control={form.control}
-                name="cargo"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Cargo</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-row justify-between space-y-1"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="analista" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Analista
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="tecnico" />
-                          </FormControl>
-                          <FormLabel className="font-normal">Técnico</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Button>Simular</Button>
+            </CardFooter>
+          </Card>
+        </form>
 
-              <FormField
-                control={form.control}
-                name="posicao"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Posição na carreira</FormLabel>
-                    <FormControl>
-                      <Input placeholder="AI" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="escolaridade"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Grau de Instrução:</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col justify-between space-y-1"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="medio" />
-                          </FormControl>
-                          <FormLabel className="font-normal">Médio</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="superior" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Superior
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="lato-sensu" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Lato Sensu
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="stricto-sensu" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Stricto Sensu
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="tempoEstado"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tempo de Serv. Público (em dias)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="3" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="dataReferencia"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Data de referência do Tempo de Estado</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
-                            ) : (
-                              <span>Selecione uma data</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="dataPublicacao"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Data prevista de publicação da Lei</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
-                            ) : (
-                              <span>Selecione uma data</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="totalVantagens"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Total das vantagens temporais (em R$)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="1500.31" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="produtividade"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Produtividade média (em R$)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="875.00" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="text-sm w-[350px] gap-2">
+            <DialogHeader>
+              <DialogTitle>Resultado da Simulação</DialogTitle>
+              <DialogDescription>
+                Não tem valor legal e pode conter erros
+              </DialogDescription>
+            </DialogHeader>
+            <div>
+              Cargo: {simulationResult.cargo?.toUpperCase()} há{" "}
+              {simulationResult.tempoEstado &&
+                simulationResult.tempoEstado.toFixed(2)}{" "}
+              anos
             </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button>Simular</Button>
-          </CardFooter>
-        </Card>
-      </form>
-
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="text-sm w-[350px] gap-2">
-          <DialogHeader>
-            <DialogTitle>Resultado da Simulação</DialogTitle>
-            <DialogDescription>
-              Não tem valor legal e pode conter erros
-            </DialogDescription>
-          </DialogHeader>
-          <div>
-            Cargo: {simulationResult.cargo?.toUpperCase()} há{" "}
-            {simulationResult.tempoEstado &&
-              simulationResult.tempoEstado.toFixed(2)}{" "}
-            anos
-          </div>
-          <div>Remuneração na posição atual:</div>
-          <div>{toLocaleString(simulationResult.remuneracao)}</div>
-          <div>Remuneração com Produtividade:</div>
-          <div>
-            {toLocaleString(
-              simulationResult.remuneracao &&
-                simulationResult.produtividade &&
-                simulationResult.remuneracao + simulationResult.produtividade
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            Reenquadrado de{" "}
-            <div className="font-semibold border border-black px-3 py-1 rounded-sm">
-              {simulationResult.posicaoAtual}
-            </div>{" "}
-            para{" "}
-            <div className="font-semibold border border-black px-3 py-1 rounded-sm">
-              {simulationResult.novaPosicao}
+            <div>Remuneração na posição atual:</div>
+            <div>{toLocaleString(simulationResult.remuneracao)}</div>
+            <div>Remuneração com Produtividade:</div>
+            <div>
+              {toLocaleString(
+                simulationResult.remuneracao &&
+                  simulationResult.produtividade &&
+                  simulationResult.remuneracao + simulationResult.produtividade
+              )}
             </div>
-          </div>
-          {simulationResult.tabela?.map((item) => (
-            <div key={item.quando}>
-              <Separator className="mt-4" />
-              <div className="font-semibold">{item.quando}</div>
-              <div>Subsídio: {toLocaleString(item.subsidio)}</div>
-              <div>
-                Parcela de Irredutibilidade: {toLocaleString(item.parcela)}
+            <div className="flex items-center gap-2">
+              Reenquadrado de{" "}
+              <div className="font-semibold border border-black px-3 py-1 rounded-sm">
+                {simulationResult.posicaoAtual}
+              </div>{" "}
+              para{" "}
+              <div className="font-semibold border border-black px-3 py-1 rounded-sm">
+                {simulationResult.novaPosicao}
               </div>
-              <div>Ganho com Reenquadramento: {toLocaleString(item.ganho)}</div>
-              {simulationResult.produtividade &&
-                item.ganho > simulationResult.produtividade && (
-                  <div className="flex flex-row items-center gap-2">
-                    <ThumbsUp className="text-green-600 font-bold" />
-                    {toLocaleString(
-                      item.ganho - simulationResult.produtividade
-                    )}{" "}
-                    acima da produtividade
-                  </div>
-                )}
-              {simulationResult.produtividade &&
-                item.ganho <= simulationResult.produtividade && (
-                  <div className="flex flex-row items-center gap-2">
-                    <ThumbsDown className="text-red-600 font-bold" />
-                    {toLocaleString(
-                      simulationResult.produtividade - item.ganho
-                    )}{" "}
-                    abaixo da produtividade
-                  </div>
-                )}
             </div>
-          ))}
-        </DialogContent>
-      </Dialog>
-    </Form>
+            {simulationResult.tabela?.map((item) => (
+              <div key={item.quando}>
+                <Separator className="mt-4" />
+                <div className="font-semibold">{item.quando}</div>
+                <div>Subsídio: {toLocaleString(item.subsidio)}</div>
+                <div>
+                  Parcela de Irredutibilidade: {toLocaleString(item.parcela)}
+                </div>
+                <div>
+                  Ganho com Reenquadramento: {toLocaleString(item.ganho)}
+                </div>
+                {simulationResult.produtividade &&
+                  item.ganho > simulationResult.produtividade && (
+                    <div className="flex flex-row items-center gap-2">
+                      <ThumbsUp className="text-green-600 font-bold" />
+                      {toLocaleString(
+                        item.ganho - simulationResult.produtividade
+                      )}{" "}
+                      acima da produtividade
+                    </div>
+                  )}
+                {simulationResult.produtividade &&
+                  item.ganho <= simulationResult.produtividade && (
+                    <div className="flex flex-row items-center gap-2">
+                      <ThumbsDown className="text-red-600 font-bold" />
+                      {toLocaleString(
+                        simulationResult.produtividade - item.ganho
+                      )}{" "}
+                      abaixo da produtividade
+                    </div>
+                  )}
+              </div>
+            ))}
+          </DialogContent>
+        </Dialog>
+      </Form>
+    </ScrollArea>
   );
 }
