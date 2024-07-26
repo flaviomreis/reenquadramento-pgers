@@ -584,7 +584,7 @@ export function EmployeeForm() {
                   name="tempoEstado"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tempo de Serv. Público (em dias)</FormLabel>
+                      <FormLabel>Tempo de Serviço Público (em dias)</FormLabel>
                       <FormControl>
                         <Input placeholder="3" {...field} />
                       </FormControl>
