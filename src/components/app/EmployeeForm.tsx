@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { Separator } from "../ui/separator";
-import { CalendarIcon, ThumbsDown, ThumbsUp } from "lucide-react";
+import { CalendarIcon, Meh, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
@@ -293,7 +293,7 @@ export function EmployeeForm() {
     };
   }
 
-  function toLocaleString(valor: number | undefined): string {
+  function toLocaleString(valor: number | undefined | false): string {
     return valor !== undefined
       ? valor.toLocaleString("pt-BR", {
           style: "currency",
@@ -741,8 +741,8 @@ export function EmployeeForm() {
             <div>Remuneração com Produtividade:</div>
             <div>
               {toLocaleString(
-                simulationResult.remuneracao &&
-                  simulationResult.produtividade &&
+                simulationResult.produtividade !== undefined &&
+                  simulationResult.remuneracao &&
                   simulationResult.remuneracao + simulationResult.produtividade
               )}
             </div>
@@ -767,7 +767,7 @@ export function EmployeeForm() {
                 <div>
                   Ganho com Reenquadramento: {toLocaleString(item.ganho)}
                 </div>
-                {simulationResult.produtividade &&
+                {simulationResult.produtividade !== undefined &&
                   item.ganho > simulationResult.produtividade && (
                     <div className="flex flex-row items-center gap-2">
                       <ThumbsUp className="text-green-600 font-bold" />
@@ -777,14 +777,21 @@ export function EmployeeForm() {
                       acima da produtividade
                     </div>
                   )}
-                {simulationResult.produtividade &&
-                  item.ganho <= simulationResult.produtividade && (
+                {simulationResult.produtividade !== undefined &&
+                  item.ganho < simulationResult.produtividade && (
                     <div className="flex flex-row items-center gap-2">
                       <ThumbsDown className="text-red-600 font-bold" />
                       {toLocaleString(
                         simulationResult.produtividade - item.ganho
                       )}{" "}
                       abaixo da produtividade
+                    </div>
+                  )}
+                {simulationResult.produtividade !== undefined &&
+                  item.ganho == simulationResult.produtividade && (
+                    <div className="flex flex-row items-center gap-2">
+                      <Meh className="text-blue-600 font-bold" />
+                      Igual à produtividade que é R$ 0,00
                     </div>
                   )}
               </div>
