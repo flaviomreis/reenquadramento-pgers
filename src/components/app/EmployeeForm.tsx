@@ -86,6 +86,7 @@ const subsidios = {
       FI: 5980,
       FII: 6026,
       FIII: 6072,
+      FIII_esp: 6163.08,
     },
     analista: {
       AI: 10800,
@@ -106,6 +107,7 @@ const subsidios = {
       FI: 14040,
       FII: 14148,
       FIII: 14256,
+      FIII_esp: 14469.84,
     },
   },
   "10/2025": {
@@ -128,6 +130,7 @@ const subsidios = {
       FI: 7314,
       FII: 7360,
       FIII: 7406,
+      FIII_esp: 7517.09,
     },
     analista: {
       AI: 10800,
@@ -148,6 +151,7 @@ const subsidios = {
       FI: 17172,
       FII: 17280,
       FIII: 17388,
+      FIII_esp: 17648.82,
     },
   },
   "10/2026": {
@@ -170,6 +174,7 @@ const subsidios = {
       FI: 8670.6,
       FII: 8930.71,
       FIII: 9198.64,
+      FIII_esp: 9336.62,
     },
     analista: {
       AI: 10800,
@@ -190,6 +195,7 @@ const subsidios = {
       FI: 20357.05,
       FII: 20967.76,
       FIII: 21596.8,
+      FIII_esp: 21920.75,
     },
   },
 };
@@ -205,6 +211,9 @@ const employeeFormSchema = z.union([
     produtividade: z.coerce.number().gte(0),
     dataReferencia: z.date(),
     dataPublicacao: z.date(),
+    escolaridade: z.enum(["superior", "lato-sensu", "stricto-sensu"], {
+      required_error: "Você deve informar seu grau de instrução",
+    }),
   }),
   z.object({
     cargo: z.literal("tecnico"),
@@ -216,6 +225,9 @@ const employeeFormSchema = z.union([
     produtividade: z.coerce.number().gte(0),
     dataReferencia: z.date(),
     dataPublicacao: z.date(),
+    escolaridade: z.enum(["medio", "superior", "lato-sensu", "stricto-sensu"], {
+      required_error: "Você deve informar seu grau de instrução",
+    }),
   }),
 ]);
 
@@ -228,6 +240,7 @@ type SimulationResulType = {
   produtividade?: number;
   novaPosicao?: string;
   tempoEstado?: number;
+  escolaridade?: string;
   tabela?: [
     {
       quando: string;
@@ -249,6 +262,7 @@ export function EmployeeForm() {
       produtividade: 875,
       dataReferencia: new Date(2024, 5, 30),
       dataPublicacao: new Date(2024, 6, 31),
+      escolaridade: "superior",
     },
   });
   const [open, setOpen] = React.useState<boolean>(false);
@@ -256,6 +270,9 @@ export function EmployeeForm() {
     React.useState<SimulationResulType>({});
 
   type posicoes = keyof (typeof subsidios)["01/2025"]["analista"];
+  const arrayPosicoes = Object.keys(
+    subsidios["01/2025"]["analista"]
+  ) as posicoes[];
 
   function calculaItemTabela(
     quando: "01/2025" | "10/2025" | "10/2026",
@@ -293,27 +310,9 @@ export function EmployeeForm() {
         1000
     );
     const tempoEstado = (data.tempoEstado + diasAtePublicacao) / 365;
-    console.log(diasAtePublicacao, data.tempoEstado, tempoEstado);
+    //console.log(diasAtePublicacao, data.tempoEstado, tempoEstado);
 
-    let posicao:
-      | "AI"
-      | "AII"
-      | "AIII"
-      | "BI"
-      | "BII"
-      | "BIII"
-      | "CI"
-      | "CII"
-      | "CIII"
-      | "DI"
-      | "DII"
-      | "DIII"
-      | "EI"
-      | "EII"
-      | "EIII"
-      | "FI"
-      | "FII"
-      | "FIII" = "AI";
+    let posicao: posicoes = "AI";
 
     if (data.cargo == "tecnico") {
       if (data.posicao == "AI") {
@@ -413,6 +412,40 @@ export function EmployeeForm() {
       }
     }
 
+    let posicaoIndex = arrayPosicoes.findIndex((item) => item == posicao);
+
+    if (data.cargo == "tecnico") {
+      if (
+        (data.escolaridade != "medio" && posicao == "FIII") ||
+        (data.escolaridade == "lato-sensu" && posicao == "FII") ||
+        (data.escolaridade == "stricto-sensu" && posicao == "FII")
+      ) {
+        posicaoIndex = arrayPosicoes.length - 1;
+      } else if (data.escolaridade == "superior") {
+        posicaoIndex++;
+      } else if (
+        data.escolaridade == "lato-sensu" ||
+        data.escolaridade == "stricto-sensu"
+      ) {
+        posicaoIndex = posicaoIndex + 2;
+      }
+    }
+
+    if (data.cargo == "analista") {
+      if (
+        (data.escolaridade == "lato-sensu" && posicao == "FIII") ||
+        (data.escolaridade == "stricto-sensu" && posicao == "FII")
+      ) {
+        posicaoIndex = arrayPosicoes.length - 1;
+      } else if (data.escolaridade == "lato-sensu") {
+        posicaoIndex++;
+      } else if (data.escolaridade == "stricto-sensu") {
+        posicaoIndex = posicaoIndex + 2;
+      }
+    }
+
+    posicao = arrayPosicoes[posicaoIndex];
+
     const tabela: [
       { quando: string; subsidio: number; parcela: number; ganho: number }
     ] = [calculaItemTabela("01/2025", data, remuneracao, posicao)];
@@ -495,10 +528,59 @@ export function EmployeeForm() {
 
               <FormField
                 control={form.control}
+                name="escolaridade"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Grau de Instrução:</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col justify-between space-y-1"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="medio" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Médio</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="superior" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Superior
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="lato-sensu" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Lato Sensu
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="stricto-sensu" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Stricto Sensu
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="tempoEstado"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tempo de Estado (em dias)</FormLabel>
+                    <FormLabel>Tempo de Serv. Público (em dias)</FormLabel>
                     <FormControl>
                       <Input placeholder="3" {...field} />
                     </FormControl>
