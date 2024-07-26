@@ -561,7 +561,7 @@ export function EmployeeForm() {
                               <RadioGroupItem value="lato-sensu" />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              Lato Sensu
+                              Especialização
                             </FormLabel>
                           </FormItem>
                           <FormItem className="flex items-center space-x-3 space-y-0">
@@ -569,7 +569,7 @@ export function EmployeeForm() {
                               <RadioGroupItem value="stricto-sensu" />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              Stricto Sensu
+                              Mestrado ou Doutorado
                             </FormLabel>
                           </FormItem>
                         </RadioGroup>
