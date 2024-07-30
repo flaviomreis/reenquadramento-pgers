@@ -432,10 +432,13 @@ export function EmployeeForm() {
       }
     }
 
+    console.log(data.escolaridade, posicao, posicaoIndex);
+
     if (data.cargo == "analista") {
       if (
         (data.escolaridade == "lato-sensu" && posicao == "FIII") ||
-        (data.escolaridade == "stricto-sensu" && posicao == "FII")
+        (data.escolaridade == "stricto-sensu" && posicao == "FII") ||
+        (data.escolaridade == "stricto-sensu" && posicao == "FIII")
       ) {
         posicaoIndex = arrayPosicoes.length - 1;
       } else if (data.escolaridade == "lato-sensu") {
@@ -444,8 +447,10 @@ export function EmployeeForm() {
         posicaoIndex = posicaoIndex + 2;
       }
     }
+    console.log(data.escolaridade, posicao, posicaoIndex);
 
     posicao = arrayPosicoes[posicaoIndex];
+    console.log(data.escolaridade, posicao, posicaoIndex);
 
     const tabela: [
       { quando: string; subsidio: number; parcela: number; ganho: number }
