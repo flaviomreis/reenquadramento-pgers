@@ -268,6 +268,7 @@ export function EmployeeForm() {
     },
   });
   const [open, setOpen] = React.useState<boolean>(false);
+  const [submitDisabled, setSubmitDisabled] = React.useState<boolean>(false);
   const [simulationResult, setSimulationResult] =
     React.useState<SimulationResulType>({});
 
@@ -304,6 +305,7 @@ export function EmployeeForm() {
   }
 
   async function handleEmployeeForm(data: EmployeeFormSchema) {
+    setSubmitDisabled(true);
     const vencimento = vencimentos[data.cargo][data.posicao];
     const remuneracao = vencimento + data.totalVantagens;
     const diasAtePublicacao = Math.round(
@@ -478,6 +480,7 @@ export function EmployeeForm() {
     });
 
     setOpen(true);
+    setSubmitDisabled(false);
   }
 
   async function saveSimulation(data: SimulationType) {
@@ -742,7 +745,7 @@ export function EmployeeForm() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button>Simular</Button>
+              <Button disabled={submitDisabled}>Simular</Button>
             </CardFooter>
           </Card>
         </ScrollArea>
