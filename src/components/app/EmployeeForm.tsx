@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { ModeToggle } from "../mode-toogle";
 import { ScrollArea } from "../ui/scroll-area";
+import { SimulationType } from "@/app/api/savesimulation/route";
 
 const vencimentos = {
   tecnico: {
@@ -302,7 +303,7 @@ export function EmployeeForm() {
       : "";
   }
 
-  function handleEmployeeForm(data: EmployeeFormSchema) {
+  async function handleEmployeeForm(data: EmployeeFormSchema) {
     const vencimento = vencimentos[data.cargo][data.posicao];
     const remuneracao = vencimento + data.totalVantagens;
     const diasAtePublicacao = Math.round(
@@ -432,8 +433,6 @@ export function EmployeeForm() {
       }
     }
 
-    console.log(data.escolaridade, posicao, posicaoIndex);
-
     if (data.cargo == "analista") {
       if (
         (data.escolaridade == "lato-sensu" && posicao == "FIII") ||
@@ -447,16 +446,26 @@ export function EmployeeForm() {
         posicaoIndex = posicaoIndex + 2;
       }
     }
-    console.log(data.escolaridade, posicao, posicaoIndex);
 
     posicao = arrayPosicoes[posicaoIndex];
-    console.log(data.escolaridade, posicao, posicaoIndex);
 
     const tabela: [
       { quando: string; subsidio: number; parcela: number; ganho: number }
     ] = [calculaItemTabela("01/2025", data, remuneracao, posicao)];
     tabela.push(calculaItemTabela("10/2025", data, remuneracao, posicao));
     tabela.push(calculaItemTabela("10/2026", data, remuneracao, posicao));
+
+    await saveSimulation({
+      cargo: data.cargo,
+      instrucao: data.escolaridade,
+      posicaoAtual: data.posicao,
+      posicao,
+      produtividade: data.produtividade,
+      dataReferencia: data.dataReferencia,
+      dataPrevistaLei: data.dataPublicacao,
+      totalVantagens: data.totalVantagens,
+      tempoServicoPublico: data.tempoEstado,
+    });
 
     setSimulationResult({
       cargo: data.cargo,
@@ -467,7 +476,20 @@ export function EmployeeForm() {
       tempoEstado,
       tabela,
     });
+
     setOpen(true);
+  }
+
+  async function saveSimulation(data: SimulationType) {
+    const result = await fetch(`/api/savesimulation`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...data,
+      }),
+    });
   }
 
   return (
@@ -482,7 +504,7 @@ export function EmployeeForm() {
                   <ModeToggle />
                 </div>
               </CardTitle>
-              <CardDescription>PGE-RS: PL 240/2024.</CardDescription>
+              <CardDescription>PGE-RS: PL 243/2024.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid w-full items-center gap-4">
