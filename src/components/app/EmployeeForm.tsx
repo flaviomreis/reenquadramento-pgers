@@ -548,7 +548,7 @@ export function EmployeeForm() {
                   name="posicao"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Posição na carreira</FormLabel>
+                      <FormLabel>Posição Atual na Carreira</FormLabel>
                       <FormControl>
                         <Input placeholder="AI" {...field} />
                       </FormControl>
