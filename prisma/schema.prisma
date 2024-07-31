@@ -14,10 +14,11 @@ datasource db {
 }
 
 model Simulation {
-  id                  Int      @id @default(autoincrement())
+  id                  String   @id @default(uuid())
   createdAt           DateTime @default(now())
   cargo               String
   instrucao           String
+  posicaoAtual        String
   posicao             String
   tempoServicoPublico Int      @default(0)
   dataReferencia      DateTime
