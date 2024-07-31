@@ -1,4 +1,6 @@
 import { prisma } from "@/db/connection";
+import { Decimal } from "@prisma/client/runtime/library";
+import { randomUUID, UUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 export type SimulationType = {
@@ -13,9 +15,19 @@ export type SimulationType = {
   tempoServicoPublico: number;
 }
 
+async function saveSimulation(simulation: SimulationType): Promise<String> {
+  const result = await prisma.simulation.create({
+    data: {
+      id: randomUUID(),
+      ...simulation
+    }
+  });
+
+  return result.id;
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  console.log(body);
 
   const { cargo, instrucao, posicao, posicaoAtual, dataReferencia, dataPrevistaLei, tempoServicoPublico, totalVantagens, produtividade } = body;
 
@@ -24,12 +36,12 @@ export async function POST(request: NextRequest) {
       {
         error: "Empty essential data",
       },
-      { status: 400 }
+      { status: 200 }
     );
   }
 
-  const simulations = await prisma.simulation.findMany();
-  console.log("simulations", simulations);
+  const uuid = await saveSimulation(body);
+  console.log("simulations", uuid);
 
   return NextResponse.json(
     {

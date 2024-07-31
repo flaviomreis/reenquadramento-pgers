@@ -464,7 +464,7 @@ export function EmployeeForm() {
       dataReferencia: data.dataReferencia,
       dataPrevistaLei: data.dataPublicacao,
       totalVantagens: data.totalVantagens,
-      tempoServicoPublico: tempoEstado,
+      tempoServicoPublico: data.tempoEstado,
     });
 
     setSimulationResult({
@@ -490,8 +490,6 @@ export function EmployeeForm() {
         ...data,
       }),
     });
-    const json = await result.json();
-    console.log("json", await json);
   }
 
   return (
