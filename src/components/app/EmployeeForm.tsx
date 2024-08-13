@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -32,11 +33,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { Separator } from "../ui/separator";
-import { CalendarIcon, Meh, ThumbsDown, ThumbsUp } from "lucide-react";
+import { CalendarIcon, Meh, ThumbsUp } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
@@ -210,7 +210,6 @@ const employeeFormSchema = z.union([
     }),
     tempoEstado: z.coerce.number().int().gte(0),
     totalVantagens: z.coerce.number().gte(0),
-    produtividade: z.coerce.number().gte(0),
     dataReferencia: z.date(),
     dataPublicacao: z.date(),
     escolaridade: z.enum(["superior", "lato-sensu", "stricto-sensu"], {
@@ -224,7 +223,6 @@ const employeeFormSchema = z.union([
     }),
     tempoEstado: z.coerce.number().int().gte(0),
     totalVantagens: z.coerce.number().gte(0),
-    produtividade: z.coerce.number().gte(0),
     dataReferencia: z.date(),
     dataPublicacao: z.date(),
     escolaridade: z.enum(["medio", "superior", "lato-sensu", "stricto-sensu"], {
@@ -239,7 +237,6 @@ type SimulationResulType = {
   cargo?: string;
   posicaoAtual?: string;
   remuneracao?: number;
-  produtividade?: number;
   novaPosicao?: string;
   tempoEstado?: number;
   escolaridade?: string;
@@ -260,11 +257,10 @@ export function EmployeeForm() {
       cargo: "analista",
       posicao: "AI",
       tempoEstado: 0,
-      totalVantagens: 0,
-      produtividade: 875,
-      dataReferencia: new Date(2024, 5, 30),
+      dataReferencia: new Date(2024, 6, 31),
       dataPublicacao: new Date(2025, 0, 1),
       escolaridade: "superior",
+      totalVantagens: 0,
     },
   });
   const [open, setOpen] = React.useState<boolean>(false);
@@ -462,7 +458,6 @@ export function EmployeeForm() {
       instrucao: data.escolaridade,
       posicaoAtual: data.posicao,
       posicao,
-      produtividade: data.produtividade,
       dataReferencia: data.dataReferencia,
       dataPrevistaLei: data.dataPublicacao,
       totalVantagens: data.totalVantagens,
@@ -474,7 +469,6 @@ export function EmployeeForm() {
       posicaoAtual: data.posicao,
       novaPosicao: posicao,
       remuneracao,
-      produtividade: data.produtividade,
       tempoEstado,
       tabela,
     });
@@ -722,22 +716,11 @@ export function EmployeeForm() {
                         Total das vantagens temporais (em R$)
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="1500.31" {...field} />
+                        <Input {...field} />
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="produtividade"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Produtividade média (em R$)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="875.00" {...field} />
-                      </FormControl>
+                      <FormDescription>
+                        Use ponto para decimal. Ex.: 1500.31
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -768,14 +751,6 @@ export function EmployeeForm() {
             </div>
             <div>Remuneração na posição atual:</div>
             <div>{toLocaleString(simulationResult.remuneracao)}</div>
-            <div>Remuneração com Produtividade:</div>
-            <div>
-              {toLocaleString(
-                simulationResult.produtividade !== undefined &&
-                  simulationResult.remuneracao &&
-                  simulationResult.remuneracao + simulationResult.produtividade
-              )}
-            </div>
             <div className="flex items-center gap-2">
               Reenquadrado de{" "}
               <div className="font-semibold border border-black px-3 py-1 rounded-sm">
@@ -797,33 +772,15 @@ export function EmployeeForm() {
                 <div>
                   Ganho com Reenquadramento: {toLocaleString(item.ganho)}
                 </div>
-                {simulationResult.produtividade !== undefined &&
-                  item.ganho > simulationResult.produtividade && (
-                    <div className="flex flex-row items-center gap-2">
-                      <ThumbsUp className="text-green-600 font-bold" />
-                      {toLocaleString(
-                        item.ganho - simulationResult.produtividade
-                      )}{" "}
-                      acima da produtividade
-                    </div>
-                  )}
-                {simulationResult.produtividade !== undefined &&
-                  item.ganho < simulationResult.produtividade && (
-                    <div className="flex flex-row items-center gap-2">
-                      <ThumbsDown className="text-red-600 font-bold" />
-                      {toLocaleString(
-                        simulationResult.produtividade - item.ganho
-                      )}{" "}
-                      abaixo da produtividade
-                    </div>
-                  )}
-                {simulationResult.produtividade !== undefined &&
-                  item.ganho == simulationResult.produtividade && (
-                    <div className="flex flex-row items-center gap-2">
-                      <Meh className="text-blue-600 font-bold" />
-                      Igual à produtividade que é R$ 0,00
-                    </div>
-                  )}
+                {item.ganho > 0 ? (
+                  <div className="flex flex-row items-center gap-2">
+                    <ThumbsUp className="text-green-600 font-bold" />
+                  </div>
+                ) : (
+                  <div className="flex flex-row items-center gap-2">
+                    <Meh className="text-blue-600 font-bold" />
+                  </div>
+                )}
               </div>
             ))}
           </DialogContent>

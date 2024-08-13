@@ -1,6 +1,5 @@
 import { prisma } from "@/db/connection";
-import { Decimal } from "@prisma/client/runtime/library";
-import { randomUUID, UUID } from "crypto";
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 export type SimulationType = {
@@ -8,7 +7,6 @@ export type SimulationType = {
   instrucao: string;
   posicaoAtual: string;
   posicao: string;
-  produtividade: number;
   dataReferencia: Date;
   dataPrevistaLei: Date;
   totalVantagens: number;
@@ -29,7 +27,7 @@ async function saveSimulation(simulation: SimulationType): Promise<String> {
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-  const { cargo, instrucao, posicao, posicaoAtual, dataReferencia, dataPrevistaLei, tempoServicoPublico, totalVantagens, produtividade } = body;
+  const { cargo, instrucao, posicao, posicaoAtual, dataReferencia, dataPrevistaLei, tempoServicoPublico, totalVantagens } = body;
 
   if (!cargo || !instrucao || !posicaoAtual || !posicao || !dataReferencia || !dataPrevistaLei) {
     return NextResponse.json(
