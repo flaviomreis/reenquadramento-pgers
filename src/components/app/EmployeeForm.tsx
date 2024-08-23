@@ -411,7 +411,7 @@ export function EmployeeForm() {
                   <ModeToggle />
                 </div>
               </CardTitle>
-              <CardDescription>PGE-RS: PL 243/2024.</CardDescription>
+              <CardDescription>PGE-RS</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid w-full items-center gap-4">
