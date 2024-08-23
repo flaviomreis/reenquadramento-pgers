@@ -68,94 +68,6 @@ const vencimentos = {
 };
 
 const subsidios = {
-  "01/2025": {
-    tecnico: {
-      AI: 4600,
-      AII: 4738,
-      AIII: 4880.14,
-      BI: 5221.75,
-      BII: 5378.4,
-      BIII: 5539.75,
-      CI: 5543,
-      CII: 5612,
-      CIII: 5658,
-      DI: 5704,
-      DII: 5750,
-      DIII: 5796,
-      EI: 5842,
-      EII: 5888,
-      EIII: 5934,
-      FI: 5980,
-      FII: 6026,
-      FIII: 6072,
-      FIII_esp: 6163.08,
-    },
-    analista: {
-      AI: 10800,
-      AII: 11124,
-      AIII: 11457.72,
-      BI: 12259.76,
-      BII: 12627.55,
-      BIII: 13006.38,
-      CI: 13014,
-      CII: 13176,
-      CIII: 13284,
-      DI: 13392,
-      DII: 13500,
-      DIII: 13607,
-      EI: 13716,
-      EII: 13824,
-      EIII: 13932,
-      FI: 14040,
-      FII: 14148,
-      FIII: 14256,
-      FIII_esp: 14469.84,
-    },
-  },
-  "10/2025": {
-    tecnico: {
-      AI: 4600,
-      AII: 4738,
-      AIII: 4880.14,
-      BI: 5221.75,
-      BII: 5378.4,
-      BIII: 5539.75,
-      CI: 5937.54,
-      CII: 6105.36,
-      CIII: 6288.52,
-      DI: 6728.72,
-      DII: 6930.58,
-      DIII: 7138.5,
-      EI: 7176,
-      EII: 7222,
-      EIII: 7268,
-      FI: 7314,
-      FII: 7360,
-      FIII: 7406,
-      FIII_esp: 7517.09,
-    },
-    analista: {
-      AI: 10800,
-      AII: 11124,
-      AIII: 11457.72,
-      BI: 12259.76,
-      BII: 12627.55,
-      BIII: 13006.38,
-      CI: 13916.83,
-      CII: 14334.33,
-      CIII: 14764.36,
-      DI: 15797.87,
-      DII: 16271.8,
-      DIII: 16759.96,
-      EI: 16848,
-      EII: 16956,
-      EIII: 17064,
-      FI: 17172,
-      FII: 17280,
-      FIII: 17388,
-      FIII_esp: 17648.82,
-    },
-  },
   "10/2026": {
     tecnico: {
       AI: 4600,
@@ -268,13 +180,13 @@ export function EmployeeForm() {
   const [simulationResult, setSimulationResult] =
     React.useState<SimulationResulType>({});
 
-  type posicoes = keyof (typeof subsidios)["01/2025"]["analista"];
+  type posicoes = keyof (typeof subsidios)["10/2026"]["analista"];
   const arrayPosicoes = Object.keys(
-    subsidios["01/2025"]["analista"]
+    subsidios["10/2026"]["analista"]
   ) as posicoes[];
 
   function calculaItemTabela(
-    quando: "01/2025" | "10/2025" | "10/2026",
+    quando: "10/2026",
     data: EmployeeFormSchema,
     remuneracao: number,
     posicao: posicoes
@@ -449,9 +361,7 @@ export function EmployeeForm() {
 
     const tabela: [
       { quando: string; subsidio: number; parcela: number; ganho: number }
-    ] = [calculaItemTabela("01/2025", data, remuneracao, posicao)];
-    tabela.push(calculaItemTabela("10/2025", data, remuneracao, posicao));
-    tabela.push(calculaItemTabela("10/2026", data, remuneracao, posicao));
+    ] = [calculaItemTabela("10/2026", data, remuneracao, posicao)];
 
     await saveSimulation({
       cargo: data.cargo,
@@ -619,51 +529,6 @@ export function EmployeeForm() {
 
                 <FormField
                   control={form.control}
-                  name="dataReferencia"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>
-                        Data referência Tempo de Serviço Público
-                      </FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP", { locale: ptBR })
-                              ) : (
-                                <span>Selecione uma data</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
                   name="dataPublicacao"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
@@ -736,7 +601,7 @@ export function EmployeeForm() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <ScrollArea className="h-full  max-h-screen overflow-y-auto">
-          <DialogContent className="text-sm w-[350px] gap-2">
+          <DialogContent className="text-sm w-[350px] gap-4">
             <DialogHeader>
               <DialogTitle>Resultado da Simulação</DialogTitle>
               <DialogDescription>
@@ -749,8 +614,12 @@ export function EmployeeForm() {
                 simulationResult.tempoEstado.toFixed(2)}{" "}
               anos
             </div>
-            <div>Remuneração na posição atual:</div>
-            <div>{toLocaleString(simulationResult.remuneracao)}</div>
+            <div>
+              Remuneração Atual:{" "}
+              <span className="font-semibold">
+                {toLocaleString(simulationResult.remuneracao)}
+              </span>
+            </div>
             <div className="flex items-center gap-2">
               Reenquadrado de{" "}
               <div className="font-semibold border border-black px-3 py-1 rounded-sm">
@@ -762,7 +631,7 @@ export function EmployeeForm() {
               </div>
             </div>
             {simulationResult.tabela?.map((item) => (
-              <div key={item.quando}>
+              <div key={item.quando} className="flex flex-col gap-4">
                 <Separator className="mt-4" />
                 <div className="font-semibold">{item.quando}</div>
                 <div>Subsídio: {toLocaleString(item.subsidio)}</div>
@@ -770,7 +639,10 @@ export function EmployeeForm() {
                   Parcela de Irredutibilidade: {toLocaleString(item.parcela)}
                 </div>
                 <div>
-                  Ganho com Reenquadramento: {toLocaleString(item.ganho)}
+                  Ganho com Reenquadramento:{" "}
+                  <span className="font-semibold">
+                    {toLocaleString(item.ganho)}
+                  </span>
                 </div>
                 {item.ganho > 0 ? (
                   <div className="flex flex-row items-center gap-2">
