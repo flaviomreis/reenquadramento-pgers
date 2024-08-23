@@ -7,8 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Simulação de Reenquadramento PL 240/2024 PGE-RS",
-  description: "Simulação de Reenquadramento PL 240/2024 PGE-RS",
+  title: "Simulação de Reenquadramento PGE-RS",
+  description: "Simulação de Reenquadramento PGE-RS",
 };
 
 export default function RootLayout({
