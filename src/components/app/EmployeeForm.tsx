@@ -169,7 +169,7 @@ export function EmployeeForm() {
       cargo: "analista",
       posicao: "AI",
       tempoEstado: 0,
-      dataReferencia: new Date(2024, 6, 31),
+      dataReferencia: new Date(2024, 7, 31),
       dataPublicacao: new Date(2025, 0, 1),
       escolaridade: "superior",
       totalVantagens: 0,
