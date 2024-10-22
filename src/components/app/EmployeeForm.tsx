@@ -739,7 +739,7 @@ export function EmployeeForm() {
               <div>
                 <div className="flex items-center gap-2">
                   Convertendo{" "}
-                  {(
+                  {Math.ceil(
                     simulationResult.diferencaProximoReenquadramanento / 2
                   ).toFixed(0)}{" "}
                   dias de L.P.
