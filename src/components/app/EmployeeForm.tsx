@@ -421,16 +421,16 @@ export function EmployeeForm() {
       { quando: string; subsidio: number; parcela: number; ganho: number }
     ] = [calculaItemTabela("10/2026", data, remuneracao, posicaoLP)];
 
-    // await saveSimulation({
-    //   cargo: data.cargo,
-    //   instrucao: data.escolaridade,
-    //   posicaoAtual: data.posicao,
-    //   posicao,
-    //   dataReferencia: data.dataReferencia,
-    //   dataPrevistaLei: data.dataPublicacao,
-    //   totalVantagens: data.totalVantagens,
-    //   tempoServicoPublico: data.tempoEstado,
-    // });
+    await saveSimulation({
+      cargo: data.cargo,
+      instrucao: data.escolaridade,
+      posicaoAtual: data.posicao,
+      posicao,
+      dataReferencia: data.dataReferencia,
+      dataPrevistaLei: data.dataPublicacao,
+      totalVantagens: data.totalVantagens,
+      tempoServicoPublico: data.tempoEstado,
+    });
 
     setSimulationResult({
       cargo: data.cargo,
