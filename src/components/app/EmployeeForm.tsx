@@ -121,6 +121,7 @@ const employeeFormSchema = z.union([
       required_error: "Você deve informar a posição na carreira",
     }),
     tempoEstado: z.coerce.number().int().gte(0),
+    licencaPremio: z.coerce.number().int().gte(0),
     totalVantagens: z.coerce.number().gte(0),
     dataReferencia: z.date(),
     dataPublicacao: z.date(),
@@ -134,6 +135,7 @@ const employeeFormSchema = z.union([
       required_error: "Você deve informar a posição na carreira",
     }),
     tempoEstado: z.coerce.number().int().gte(0),
+    licencaPremio: z.coerce.number().int().gte(0),
     totalVantagens: z.coerce.number().gte(0),
     dataReferencia: z.date(),
     dataPublicacao: z.date(),
@@ -151,8 +153,18 @@ type SimulationResulType = {
   remuneracao?: number;
   novaPosicao?: string;
   tempoEstado?: number;
+  diferencaProximoReenquadramanento?: number;
   escolaridade?: string;
   tabela?: [
+    {
+      quando: string;
+      subsidio: number;
+      parcela: number;
+      ganho: number;
+    }
+  ];
+  posicaoLP?: string;
+  tabelaLP?: [
     {
       quando: string;
       subsidio: number;
@@ -169,7 +181,8 @@ export function EmployeeForm() {
       cargo: "analista",
       posicao: "AI",
       tempoEstado: 0,
-      dataReferencia: new Date(2024, 7, 31),
+      licencaPremio: 0,
+      dataReferencia: new Date(2024, 8, 30),
       dataPublicacao: new Date(2025, 0, 1),
       escolaridade: "superior",
       totalVantagens: 0,
@@ -225,49 +238,60 @@ export function EmployeeForm() {
     //console.log(diasAtePublicacao, data.tempoEstado, tempoEstado);
 
     let posicao: posicoes = "AI";
+    let diferencaProximoReenquadramanento = -1;
 
     if (data.cargo == "tecnico") {
       if (data.posicao == "AI") {
         if (tempoEstado <= 3) {
           posicao = "AI";
+          diferencaProximoReenquadramanento = (3 - tempoEstado) * 365;
         } else if (tempoEstado > 3 && tempoEstado <= 6) {
           posicao = "AII";
+          diferencaProximoReenquadramanento = (6 - tempoEstado) * 365;
         } else if (tempoEstado > 6) {
           posicao = "AIII";
         }
       } else if (data.posicao == "AII") {
         if (tempoEstado <= 6) {
           posicao = "BI";
+          diferencaProximoReenquadramanento = (6 - tempoEstado) * 365;
         } else if (tempoEstado > 6 && tempoEstado <= 9) {
           posicao = "BII";
+          diferencaProximoReenquadramanento = (9 - tempoEstado) * 365;
         } else if (tempoEstado > 9 && tempoEstado <= 12) {
           posicao = "BIII";
+          diferencaProximoReenquadramanento = (12 - tempoEstado) * 365;
         } else if (tempoEstado > 12 && tempoEstado <= 15) {
           posicao = "CI";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "CII";
         }
       } else if (data.posicao == "BI") {
         if (tempoEstado <= 15) {
           posicao = "CIII";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "DI";
         }
       } else if (data.posicao == "BII") {
         if (tempoEstado <= 15) {
           posicao = "DII";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "DIII";
         }
       } else if (data.posicao == "CI") {
         if (tempoEstado <= 15) {
           posicao = "EI";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "EII";
         }
       } else if (data.posicao == "CII") {
         if (tempoEstado <= 15) {
           posicao = "EIII";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "FI";
         }
@@ -280,44 +304,54 @@ export function EmployeeForm() {
       if (data.posicao == "AI") {
         if (tempoEstado <= 3) {
           posicao = "AI";
+          diferencaProximoReenquadramanento = (3 - tempoEstado) * 365;
         } else if (tempoEstado > 3 && tempoEstado <= 6) {
           posicao = "AII";
+          diferencaProximoReenquadramanento = (6 - tempoEstado) * 365;
         } else if (tempoEstado > 6) {
           posicao = "AIII";
         }
       } else if (data.posicao == "AII") {
         if (tempoEstado <= 6) {
           posicao = "BI";
+          diferencaProximoReenquadramanento = (6 - tempoEstado) * 365;
         } else if (tempoEstado > 6 && tempoEstado <= 9) {
           posicao = "BII";
+          diferencaProximoReenquadramanento = (9 - tempoEstado) * 365;
         } else if (tempoEstado > 9 && tempoEstado <= 12) {
           posicao = "BIII";
+          diferencaProximoReenquadramanento = (12 - tempoEstado) * 365;
         } else if (tempoEstado > 12 && tempoEstado <= 15) {
           posicao = "CI";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "CII";
         }
       } else if (data.posicao == "BI") {
         if (tempoEstado <= 15) {
           posicao = "CIII";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "DI";
         }
       } else if (data.posicao == "BII") {
         if (tempoEstado <= 15) {
           posicao = "DII";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "DIII";
         }
       } else if (data.posicao == "CI") {
         if (tempoEstado <= 15) {
           posicao = "EI";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "EII";
         }
       } else if (data.posicao == "CII") {
         if (tempoEstado <= 15) {
           posicao = "FII";
+          diferencaProximoReenquadramanento = (15 - tempoEstado) * 365;
         } else if (tempoEstado > 15) {
           posicao = "FIII";
         }
@@ -325,6 +359,7 @@ export function EmployeeForm() {
     }
 
     let posicaoIndex = arrayPosicoes.findIndex((item) => item == posicao);
+    console.log(diferencaProximoReenquadramanento);
 
     if (data.cargo == "tecnico") {
       if (
@@ -357,30 +392,56 @@ export function EmployeeForm() {
       }
     }
 
+    let posicaoIndexLP = posicaoIndex;
+
+    if (
+      posicaoIndex < arrayPosicoes.length - 1 &&
+      diferencaProximoReenquadramanento >= 0 &&
+      diferencaProximoReenquadramanento <= data.licencaPremio * 2
+    ) {
+      posicaoIndexLP++;
+    } else {
+      diferencaProximoReenquadramanento = -1;
+    }
+    console.log(
+      diferencaProximoReenquadramanento,
+      data.licencaPremio,
+      posicaoIndex,
+      posicaoIndexLP
+    );
+
     posicao = arrayPosicoes[posicaoIndex];
+    const posicaoLP = arrayPosicoes[posicaoIndexLP];
 
     const tabela: [
       { quando: string; subsidio: number; parcela: number; ganho: number }
     ] = [calculaItemTabela("10/2026", data, remuneracao, posicao)];
 
-    await saveSimulation({
-      cargo: data.cargo,
-      instrucao: data.escolaridade,
-      posicaoAtual: data.posicao,
-      posicao,
-      dataReferencia: data.dataReferencia,
-      dataPrevistaLei: data.dataPublicacao,
-      totalVantagens: data.totalVantagens,
-      tempoServicoPublico: data.tempoEstado,
-    });
+    const tabelaLP: [
+      { quando: string; subsidio: number; parcela: number; ganho: number }
+    ] = [calculaItemTabela("10/2026", data, remuneracao, posicaoLP)];
+
+    // await saveSimulation({
+    //   cargo: data.cargo,
+    //   instrucao: data.escolaridade,
+    //   posicaoAtual: data.posicao,
+    //   posicao,
+    //   dataReferencia: data.dataReferencia,
+    //   dataPrevistaLei: data.dataPublicacao,
+    //   totalVantagens: data.totalVantagens,
+    //   tempoServicoPublico: data.tempoEstado,
+    // });
 
     setSimulationResult({
       cargo: data.cargo,
       posicaoAtual: data.posicao,
       novaPosicao: posicao,
+      posicaoLP,
       remuneracao,
       tempoEstado,
+      diferencaProximoReenquadramanento,
       tabela,
+      tabelaLP,
     });
 
     setOpen(true);
@@ -520,7 +581,21 @@ export function EmployeeForm() {
                     <FormItem>
                       <FormLabel>Tempo de Serviço Público (em dias)</FormLabel>
                       <FormControl>
-                        <Input placeholder="3" {...field} />
+                        <Input placeholder="0" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="licencaPremio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Estoque de Licença-Prêmio (em dias)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="0" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -630,6 +705,7 @@ export function EmployeeForm() {
                 {simulationResult.novaPosicao}
               </div>
             </div>
+
             {simulationResult.tabela?.map((item) => (
               <div key={item.quando} className="flex flex-col gap-4">
                 <Separator className="mt-4" />
@@ -655,6 +731,41 @@ export function EmployeeForm() {
                 )}
               </div>
             ))}
+
+            <Separator className="mt-4" />
+            {simulationResult?.diferencaProximoReenquadramanento !==
+              undefined &&
+            simulationResult.diferencaProximoReenquadramanento >= 0 ? (
+              <div>
+                <div className="flex items-center gap-2">
+                  Convertendo{" "}
+                  {(
+                    simulationResult.diferencaProximoReenquadramanento / 2
+                  ).toFixed(0)}{" "}
+                  dias de L.P.
+                  <div className="font-semibold border border-black px-3 py-1 rounded-sm">
+                    {simulationResult.posicaoLP}
+                  </div>
+                </div>
+                {simulationResult.tabelaLP?.map((item, index) => (
+                  <div key={item.quando} className="flex flex-col gap-4">
+                    <Separator className="mt-4" />
+                    <div className="font-semibold">{item.quando}</div>
+                    <div>Subsídio: {toLocaleString(item.subsidio)}</div>
+                    <div>
+                      Parcela de Irredutibilidade:{" "}
+                      {toLocaleString(item.parcela)}
+                    </div>
+                    <div>
+                      Ganho com Reenquadramento:{" "}
+                      <span className="font-semibold">
+                        {toLocaleString(item.ganho)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </DialogContent>
         </ScrollArea>
       </Dialog>
