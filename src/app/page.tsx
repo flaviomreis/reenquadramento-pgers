@@ -1,10 +1,11 @@
-"use client";
 import { EmployeeForm } from "@/components/app/EmployeeForm";
-import { useSearchParams } from "next/navigation";
 
-export default function Home() {
-  const searchParams = useSearchParams();
-  const simulationTables = searchParams.get("q") || "last";
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const simulationTables = (searchParams.q as string) || "last";
   console.log(simulationTables);
 
   return (
