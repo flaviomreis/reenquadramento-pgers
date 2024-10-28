@@ -68,6 +68,94 @@ const vencimentos = {
 };
 
 const subsidios = {
+  "01/2025": {
+    tecnico: {
+      AI: 4600,
+      AII: 4738,
+      AIII: 4880.14,
+      BI: 5221.75,
+      BII: 5378.4,
+      BIII: 5539.75,
+      CI: 5543,
+      CII: 5612,
+      CIII: 5658,
+      DI: 5704,
+      DII: 5750,
+      DIII: 5796,
+      EI: 5842,
+      EII: 5888,
+      EIII: 5934,
+      FI: 5980,
+      FII: 6026,
+      FIII: 6072,
+      FIII_esp: 6163.08,
+    },
+    analista: {
+      AI: 10800,
+      AII: 11124,
+      AIII: 11457.72,
+      BI: 12259.76,
+      BII: 12627.55,
+      BIII: 13006.38,
+      CI: 13014,
+      CII: 13176,
+      CIII: 13284,
+      DI: 13392,
+      DII: 13500,
+      DIII: 13607,
+      EI: 13716,
+      EII: 13824,
+      EIII: 13932,
+      FI: 14040,
+      FII: 14148,
+      FIII: 14256,
+      FIII_esp: 14469.84,
+    },
+  },
+  "10/2025": {
+    tecnico: {
+      AI: 4600,
+      AII: 4738,
+      AIII: 4880.14,
+      BI: 5221.75,
+      BII: 5378.4,
+      BIII: 5539.75,
+      CI: 5937.54,
+      CII: 6105.36,
+      CIII: 6288.52,
+      DI: 6728.72,
+      DII: 6930.58,
+      DIII: 7138.5,
+      EI: 7176,
+      EII: 7222,
+      EIII: 7268,
+      FI: 7314,
+      FII: 7360,
+      FIII: 7406,
+      FIII_esp: 7517.09,
+    },
+    analista: {
+      AI: 10800,
+      AII: 11124,
+      AIII: 11457.72,
+      BI: 12259.76,
+      BII: 12627.55,
+      BIII: 13006.38,
+      CI: 13916.83,
+      CII: 14334.33,
+      CIII: 14764.36,
+      DI: 15797.87,
+      DII: 16271.8,
+      DIII: 16759.96,
+      EI: 16848,
+      EII: 16956,
+      EIII: 17064,
+      FI: 17172,
+      FII: 17280,
+      FIII: 17388,
+      FIII_esp: 17648.82,
+    },
+  },
   "10/2026": {
     tecnico: {
       AI: 4600,
@@ -174,7 +262,11 @@ type SimulationResulType = {
   ];
 };
 
-export function EmployeeForm() {
+export function EmployeeForm({
+  simulationTables,
+}: {
+  simulationTables: string;
+}) {
   const form = useForm<EmployeeFormSchema>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
@@ -199,7 +291,7 @@ export function EmployeeForm() {
   ) as posicoes[];
 
   function calculaItemTabela(
-    quando: "10/2026",
+    quando: "01/2025" | "10/2025" | "10/2026",
     data: EmployeeFormSchema,
     remuneracao: number,
     posicao: posicoes
@@ -426,16 +518,27 @@ export function EmployeeForm() {
       { quando: string; subsidio: number; parcela: number; ganho: number }
     ] = [calculaItemTabela("10/2026", data, remuneracao, posicaoLP)];
 
-    await saveSimulation({
-      cargo: data.cargo,
-      instrucao: data.escolaridade,
-      posicaoAtual: data.posicao,
-      posicao,
-      dataReferencia: data.dataReferencia,
-      dataPrevistaLei: data.dataPublicacao,
-      totalVantagens: data.totalVantagens,
-      tempoServicoPublico: data.tempoEstado,
-    });
+    if (simulationTables == "all") {
+      tabela.unshift(calculaItemTabela("10/2025", data, remuneracao, posicao));
+      tabela.unshift(calculaItemTabela("01/2025", data, remuneracao, posicao));
+      tabelaLP.unshift(
+        calculaItemTabela("10/2025", data, remuneracao, posicaoLP)
+      );
+      tabelaLP.unshift(
+        calculaItemTabela("01/2025", data, remuneracao, posicaoLP)
+      );
+    }
+
+    // await saveSimulation({
+    //   cargo: data.cargo,
+    //   instrucao: data.escolaridade,
+    //   posicaoAtual: data.posicao,
+    //   posicao,
+    //   dataReferencia: data.dataReferencia,
+    //   dataPrevistaLei: data.dataPublicacao,
+    //   totalVantagens: data.totalVantagens,
+    //   tempoServicoPublico: data.tempoEstado,
+    // });
 
     setSimulationResult({
       cargo: data.cargo,
@@ -468,7 +571,7 @@ export function EmployeeForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleEmployeeForm)}>
-        <ScrollArea className="h-full  max-h-screen overflow-y-auto">
+        <ScrollArea className="h-full max-h-screen overflow-y-auto">
           <Card className="w-[350px]">
             <CardHeader>
               <CardTitle>
@@ -680,8 +783,8 @@ export function EmployeeForm() {
       </form>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <ScrollArea className="h-full  max-h-screen overflow-y-auto">
-          <DialogContent className="text-sm w-[350px] gap-4">
+        <DialogContent className="text-sm w-[350px] gap-4">
+          <ScrollArea className="h-full max-h-screen overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Resultado da Simulação</DialogTitle>
               <DialogDescription>
@@ -737,11 +840,11 @@ export function EmployeeForm() {
               </div>
             ))}
 
-            <Separator className="mt-4" />
             {simulationResult?.diferencaProximoReenquadramanento !==
               undefined &&
             simulationResult.diferencaProximoReenquadramanento >= 0 ? (
               <div>
+                <Separator className="my-4" />
                 <div className="flex items-center gap-2">
                   Convertendo{" "}
                   {simulationResult.diferencaProximoReenquadramanento.toFixed(
@@ -771,8 +874,8 @@ export function EmployeeForm() {
                 ))}
               </div>
             ) : null}
-          </DialogContent>
-        </ScrollArea>
+          </ScrollArea>
+        </DialogContent>
       </Dialog>
     </Form>
   );
