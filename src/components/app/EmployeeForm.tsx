@@ -359,7 +359,7 @@ export function EmployeeForm() {
     }
 
     let posicaoIndex = arrayPosicoes.findIndex((item) => item == posicao);
-    console.log(diferencaProximoReenquadramanento);
+    console.log("diferença:", diferencaProximoReenquadramanento);
 
     if (data.cargo == "tecnico") {
       if (
@@ -400,9 +400,14 @@ export function EmployeeForm() {
       diferencaProximoReenquadramanento <= data.licencaPremio * 2
     ) {
       posicaoIndexLP++;
+
+      diferencaProximoReenquadramanento =
+        Math.ceil(diferencaProximoReenquadramanento / 2 / 30) * 30;
+      console.log(diferencaProximoReenquadramanento);
     } else {
       diferencaProximoReenquadramanento = -1;
     }
+
     console.log(
       diferencaProximoReenquadramanento,
       data.licencaPremio,
@@ -709,7 +714,7 @@ export function EmployeeForm() {
             {simulationResult.tabela?.map((item) => (
               <div key={item.quando} className="flex flex-col gap-4">
                 <Separator className="mt-4" />
-                <div className="font-semibold">{item.quando}</div>
+                <div className="font-semibold">Tabela de {item.quando}</div>
                 <div>Subsídio: {toLocaleString(item.subsidio)}</div>
                 <div>
                   Parcela de Irredutibilidade: {toLocaleString(item.parcela)}
@@ -739,9 +744,9 @@ export function EmployeeForm() {
               <div>
                 <div className="flex items-center gap-2">
                   Convertendo{" "}
-                  {Math.ceil(
-                    simulationResult.diferencaProximoReenquadramanento / 2
-                  ).toFixed(0)}{" "}
+                  {simulationResult.diferencaProximoReenquadramanento.toFixed(
+                    0
+                  )}{" "}
                   dias de L.P.
                   <div className="font-semibold border border-black px-3 py-1 rounded-sm">
                     {simulationResult.posicaoLP}
@@ -750,7 +755,7 @@ export function EmployeeForm() {
                 {simulationResult.tabelaLP?.map((item, index) => (
                   <div key={item.quando} className="flex flex-col gap-4">
                     <Separator className="mt-4" />
-                    <div className="font-semibold">{item.quando}</div>
+                    <div className="font-semibold">Tabela de {item.quando}</div>
                     <div>Subsídio: {toLocaleString(item.subsidio)}</div>
                     <div>
                       Parcela de Irredutibilidade:{" "}
