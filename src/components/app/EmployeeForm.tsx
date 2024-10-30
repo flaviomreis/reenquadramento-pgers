@@ -529,16 +529,16 @@ export function EmployeeForm({
       );
     }
 
-    // await saveSimulation({
-    //   cargo: data.cargo,
-    //   instrucao: data.escolaridade,
-    //   posicaoAtual: data.posicao,
-    //   posicao,
-    //   dataReferencia: data.dataReferencia,
-    //   dataPrevistaLei: data.dataPublicacao,
-    //   totalVantagens: data.totalVantagens,
-    //   tempoServicoPublico: data.tempoEstado,
-    // });
+    await saveSimulation({
+      cargo: data.cargo,
+      instrucao: data.escolaridade,
+      posicaoAtual: data.posicao,
+      posicao,
+      dataReferencia: data.dataReferencia,
+      dataPrevistaLei: data.dataPublicacao,
+      totalVantagens: data.totalVantagens,
+      tempoServicoPublico: data.tempoEstado,
+    });
 
     setSimulationResult({
       cargo: data.cargo,
