@@ -274,7 +274,7 @@ export function EmployeeForm({
       posicao: "AI",
       tempoEstado: 0,
       licencaPremio: 0,
-      dataReferencia: new Date(2024, 9, 31),
+      dataReferencia: new Date(2024, 10, 30),
       dataPublicacao: new Date(2025, 0, 1),
       escolaridade: "superior",
       totalVantagens: 0,
